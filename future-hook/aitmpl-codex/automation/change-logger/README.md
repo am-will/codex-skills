@@ -1,6 +1,6 @@
 # automation/change-logger
 
-Log every file mutation to CSV for demo prep. Records timestamp, tool, file path, action, and details for Edit, MultiEdit, Write, and Bash operations. Output: .claude/critical_log_changes.csv
+Log every file mutation to CSV for demo prep. Records timestamp, tool, file path, action, and details for Edit, MultiEdit, Write, and Bash operations. Output: .codex/critical_log_changes.csv
 
 Compatibility: direct
 

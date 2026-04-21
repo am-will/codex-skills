@@ -1,6 +1,6 @@
 # development-tools/command-logger
 
-Log all Claude Code commands to a file for audit and debugging purposes. Simple logging that records tool usage with timestamps.
+Log all Codex commands to a file for audit and debugging purposes. Simple logging that records tool usage with timestamps.
 
 Compatibility: direct
 

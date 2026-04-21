@@ -1,7 +1,7 @@
 {
   "name": "automation/discord-notifications",
   "sourcePath": "automation/discord-notifications.json",
-  "description": "Send Discord notifications when Claude Code finishes working. Requires DISCORD_WEBHOOK_URL environment variable. Get webhook URL from Discord Server Settings -> Integrations -> Webhooks.",
+  "description": "Send Discord notifications when Codex finishes working. Requires DISCORD_WEBHOOK_URL environment variable. Get webhook URL from Discord Server Settings -> Integrations -> Webhooks.",
   "compatibility": "adapted",
   "notes": [
     "SubagentStop -> Stop"

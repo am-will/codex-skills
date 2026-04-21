@@ -1,6 +1,6 @@
 # automation/discord-notifications
 
-Send Discord notifications when Claude Code finishes working. Requires DISCORD_WEBHOOK_URL environment variable. Get webhook URL from Discord Server Settings -> Integrations -> Webhooks.
+Send Discord notifications when Codex finishes working. Requires DISCORD_WEBHOOK_URL environment variable. Get webhook URL from Discord Server Settings -> Integrations -> Webhooks.
 
 Compatibility: adapted
 

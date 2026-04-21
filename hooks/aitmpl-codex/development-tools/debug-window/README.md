@@ -1,6 +1,6 @@
 # development-tools/debug-window
 
-Auto Debug Log Viewer. Opens a live-tailing debug log window when Claude Code starts with --debug or -d flag. The window closes automatically on session end. To keep the debug window open after session ends, set DEBUG_WINDOW_AUTO_CLOSE_DISABLE=1 in your settings.json. Tested on Intel Mac. Supports macOS, Linux, and Windows (Git Bash/Cygwin). Contributions from other platform users are welcome.
+Auto Debug Log Viewer. Opens a live-tailing debug log window when Codex starts with --debug or -d flag. The window closes automatically on session end. To keep the debug window open after session ends, set DEBUG_WINDOW_AUTO_CLOSE_DISABLE=1 in your settings.json. Tested on Intel Mac. Supports macOS, Linux, and Windows (Git Bash/Cygwin). Contributions from other platform users are welcome.
 
 Compatibility: adapted
 

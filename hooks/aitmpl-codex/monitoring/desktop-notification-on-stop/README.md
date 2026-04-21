@@ -1,6 +1,6 @@
 # monitoring/desktop-notification-on-stop
 
-Sends a native desktop notification when Claude Code finishes responding. Uses the Stop hook event so you get a single notification per response instead of one per tool call (which is very noisy with PostToolUse). Supports macOS (osascript) and Linux (notify-send). Useful when you switch to another window while Claude works — you'll get a notification when it's ready for your input.
+Sends a native desktop notification when Codex finishes responding. Uses the Stop hook event so you get a single notification per response instead of one per tool call (which is very noisy with PostToolUse). Supports macOS (osascript) and Linux (notify-send). Useful when you switch to another window while Codex works — you'll get a notification when it's ready for your input.
 
 Compatibility: direct
 

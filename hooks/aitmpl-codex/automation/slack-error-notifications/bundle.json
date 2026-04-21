@@ -1,7 +1,7 @@
 {
   "name": "automation/slack-error-notifications",
   "sourcePath": "automation/slack-error-notifications.json",
-  "description": "Send Slack notifications when Claude Code encounters long-running operations or when tools take significant time. Helps monitor productivity and catch potential issues. Requires SLACK_WEBHOOK_URL environment variable.",
+  "description": "Send Slack notifications when Codex encounters long-running operations or when tools take significant time. Helps monitor productivity and catch potential issues. Requires SLACK_WEBHOOK_URL environment variable.",
   "compatibility": "adapted",
   "notes": [
     "Notification -> Stop"

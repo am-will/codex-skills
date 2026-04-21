@@ -1,7 +1,7 @@
 {
   "name": "automation/telegram-detailed-notifications",
   "sourcePath": "automation/telegram-detailed-notifications.json",
-  "description": "Send detailed Telegram notifications with session information when Claude Code finishes. Includes working directory, session duration, and system info. Requires TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID environment variables.",
+  "description": "Send detailed Telegram notifications with session information when Codex finishes. Includes working directory, session duration, and system info. Requires TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID environment variables.",
   "compatibility": "direct",
   "notes": [],
   "events": [

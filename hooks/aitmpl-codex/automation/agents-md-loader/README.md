@@ -1,6 +1,6 @@
 # automation/agents-md-loader
 
-Automatically loads AGENTS.md configuration file content at session start to ensure Claude Code follows project-specific agent behavior. Only loads if AGENTS.md exists, otherwise passes empty context. Supports the universal AGENTS.md standard for cross-platform AI assistant compatibility.
+Automatically loads AGENTS.md configuration file content at session start to ensure Codex follows project-specific agent behavior. Only loads if AGENTS.md exists, otherwise passes empty context. Supports the universal AGENTS.md standard for cross-platform AI assistant compatibility.
 
 Compatibility: direct
 

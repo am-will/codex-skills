@@ -106,23 +106,20 @@ npx skills update        # Update all installed skills
 
 ### Codex Hook Catalog
 
-The `hooks/` directory contains a catalog of **50 ready-to-install Codex hook bundles**, generated from `davila7/claude-code-templates` and adapted for the Codex event model.
+The `hooks/` directory contains a catalog of **27 ready-to-install Codex hook bundles**, generated from an upstream hook template set and adapted for the current Codex event model. Bundles that still depend on unsupported `Edit|Write|MultiEdit` matcher paths were moved to `future-hook/`.
 
 **Categories:**
 
 | Category | Bundles | Examples |
 |---|---|---|
-| `automation` | 18 | Slack/Discord/Telegram notifications, Vercel auto-deploy, dependency checker, change logger |
-| `development-tools` | 8 | Debug window, lint-on-save, smart formatting, file backup, worktree ghostty |
+| `automation` | 13 | Slack/Discord/Telegram notifications, deployment health monitor, AGENTS loader |
+| `development-tools` | 3 | Command logger, debug window, worktree ghostty |
 | `git` | 3 | Conventional commits, prevent direct push, validate branch name |
-| `git-workflow` | 2 | Auto git-add, smart commit |
 | `monitoring` | 2 | Desktop notification on stop, LangSmith tracing |
-| `performance` | 2 | Performance budget guard, performance monitor |
-| `post-tool` | 4 | Format JS/Python files, git-add changes, run tests after changes |
-| `pre-tool` | 4 | Backup before edit, console-log cleaner, notify before bash, update search year |
-| `quality-gates` | 3 | Plan gate, scope guard, TDD gate |
-| `security` | 4 | Dangerous command blocker, file protection, secret scanner, security scanner |
-| `testing` | 1 | Test runner |
+| `performance` | 1 | Performance monitor |
+| `pre-tool` | 2 | Notify before bash, update search year |
+| `quality-gates` | 1 | Scope guard |
+| `security` | 2 | Dangerous command blocker, secret scanner |
 
 **Install a bundle:**
 ```bash

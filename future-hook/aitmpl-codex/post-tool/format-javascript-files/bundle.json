@@ -1,0 +1,11 @@
+{
+  "name": "post-tool/format-javascript-files",
+  "sourcePath": "post-tool/format-javascript-files.json",
+  "description": "Automatically format JavaScript/TypeScript files after any Edit operation using prettier. This hook runs 'npx prettier --write' on any .js, .ts, .jsx, or .tsx file that Codex modifies, ensuring consistent code formatting. Uses npx so prettier doesn't need to be globally installed. Includes error suppression so it won't fail if prettier is not available.",
+  "compatibility": "direct",
+  "notes": [],
+  "events": [
+    "PostToolUse"
+  ],
+  "hasSupportingFiles": false
+}

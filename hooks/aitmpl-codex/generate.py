@@ -11,7 +11,7 @@ from pathlib import Path
 SOURCE_ROOT = Path(
     os.environ.get(
         "AITMPL_HOOKS_SOURCE",
-        "/tmp/claude-code-templates/cli-tool/components/hooks",
+        "/tmp/upstream-hook-templates/cli-tool/components/hooks",
     )
 )
 OUTPUT_ROOT = Path(__file__).resolve().parent
@@ -440,7 +440,7 @@ def write_root_readme(bundles: list[dict]) -> None:
     lines = [
         "# AITMPL to Codex Hook Catalog",
         "",
-        "This catalog mirrors the hook templates from `davila7/claude-code-templates` and rewrites them into Codex hook bundles.",
+        "This catalog mirrors an upstream hook template set and rewrites it into Codex hook bundles.",
         "",
         f"- Bundles: {len(bundles)}",
         f"- Direct: {direct}",

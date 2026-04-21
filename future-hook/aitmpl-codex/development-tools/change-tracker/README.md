@@ -1,6 +1,6 @@
 # development-tools/change-tracker
 
-Track file changes in a simple log. Records which files were modified and when for easy tracking of Claude Code activity.
+Track file changes in a simple log. Records which files were modified and when for easy tracking of Codex activity.
 
 Compatibility: direct
 

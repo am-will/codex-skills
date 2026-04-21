@@ -1,7 +1,7 @@
 {
   "name": "performance/performance-monitor",
   "sourcePath": "performance/performance-monitor.json",
-  "description": "Monitor system performance during Claude Code operations. Tracks CPU, memory usage, and execution time for performance optimization.",
+  "description": "Monitor system performance during Codex operations. Tracks CPU, memory usage, and execution time for performance optimization.",
   "compatibility": "direct",
   "notes": [],
   "events": [

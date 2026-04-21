@@ -1,6 +1,6 @@
 # security/dangerous-command-blocker
 
-Advanced protection against dangerous shell commands with multi-level security. Blocks catastrophic operations (rm -rf /, dd, mkfs), protects critical paths (.claude/, .git/, node_modules/), and warns about suspicious patterns. Features: catastrophic command blocking, critical path protection, smart pattern detection, and detailed safety messages.
+Advanced protection against dangerous shell commands with multi-level security. Blocks catastrophic operations (rm -rf /, dd, mkfs), protects critical paths (.codex/, .git/, node_modules/), and warns about suspicious patterns. Features: catastrophic command blocking, critical path protection, smart pattern detection, and detailed safety messages.
 
 Compatibility: direct
 

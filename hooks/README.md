@@ -1,6 +1,6 @@
 # Codex Hook Catalog
 
-This folder contains the Codex-ready hook catalog generated from the `davila7/claude-code-templates` hook set.
+This folder contains the active Codex-ready hook catalog generated from an upstream hook template set.
 
 Layout:
 - `aitmpl-codex/catalog.json` indexes every bundle.
@@ -28,8 +28,11 @@ For testing:
 
 Compatibility:
 - Some bundles are `direct` Codex matches.
-- Others are `adapted` where Claude Code had an event Codex does not currently expose.
+- Others are `adapted` where the upstream template used an event Codex does not currently expose.
 - Network/service hooks like Slack, Discord, Telegram, Vercel, and LangSmith are skipped by the harness and may need manual credentials.
+
+Archived bundles:
+- Hook bundles that still depend on unsupported `Edit|Write|MultiEdit` matcher paths now live under `../future-hook/aitmpl-codex/`.
 
 ## Create Custom Hooks
 

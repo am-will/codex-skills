@@ -1,6 +1,6 @@
 # performance/performance-monitor
 
-Monitor system performance during Claude Code operations. Tracks CPU, memory usage, and execution time for performance optimization.
+Monitor system performance during Codex operations. Tracks CPU, memory usage, and execution time for performance optimization.
 
 Compatibility: direct
 

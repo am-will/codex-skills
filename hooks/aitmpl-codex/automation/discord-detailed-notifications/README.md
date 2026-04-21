@@ -1,6 +1,6 @@
 # automation/discord-detailed-notifications
 
-Send detailed Discord notifications with session information when Claude Code finishes. Includes working directory, session duration, and system info with rich embeds. Requires DISCORD_WEBHOOK_URL environment variable.
+Send detailed Discord notifications with session information when Codex finishes. Includes working directory, session duration, and system info with rich embeds. Requires DISCORD_WEBHOOK_URL environment variable.
 
 Compatibility: direct
 

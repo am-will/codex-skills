@@ -1,7 +1,7 @@
 {
   "name": "automation/simple-notifications",
   "sourcePath": "automation/simple-notifications.json",
-  "description": "Send simple desktop notifications when Claude Code operations complete. Works on macOS and Linux systems.",
+  "description": "Send simple desktop notifications when Codex operations complete. Works on macOS and Linux systems.",
   "compatibility": "direct",
   "notes": [],
   "events": [

@@ -1,0 +1,11 @@
+{
+  "name": "post-tool/git-add-changes",
+  "sourcePath": "post-tool/git-add-changes.json",
+  "description": "Automatically stage changes in git after file modifications for easier commit workflow. This hook runs 'git add' on any file that Codex edits or writes, automatically staging changes for the next commit. Includes error suppression so it won't fail in non-git repositories. Helps streamline the development workflow by preparing files for commit.",
+  "compatibility": "direct",
+  "notes": [],
+  "events": [
+    "PostToolUse"
+  ],
+  "hasSupportingFiles": false
+}

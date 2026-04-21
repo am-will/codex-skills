@@ -1,6 +1,6 @@
 # automation/simple-notifications
 
-Send simple desktop notifications when Claude Code operations complete. Works on macOS and Linux systems.
+Send simple desktop notifications when Codex operations complete. Works on macOS and Linux systems.
 
 Compatibility: direct
 

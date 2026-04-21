@@ -1,6 +1,6 @@
 # automation/telegram-detailed-notifications
 
-Send detailed Telegram notifications with session information when Claude Code finishes. Includes working directory, session duration, and system info. Requires TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID environment variables.
+Send detailed Telegram notifications with session information when Codex finishes. Includes working directory, session duration, and system info. Requires TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID environment variables.
 
 Compatibility: direct
 

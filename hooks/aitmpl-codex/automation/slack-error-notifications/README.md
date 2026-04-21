@@ -1,6 +1,6 @@
 # automation/slack-error-notifications
 
-Send Slack notifications when Claude Code encounters long-running operations or when tools take significant time. Helps monitor productivity and catch potential issues. Requires SLACK_WEBHOOK_URL environment variable.
+Send Slack notifications when Codex encounters long-running operations or when tools take significant time. Helps monitor productivity and catch potential issues. Requires SLACK_WEBHOOK_URL environment variable.
 
 Compatibility: adapted
 

@@ -1,0 +1,11 @@
+{
+  "name": "automation/change-logger",
+  "sourcePath": "automation/change-logger.json",
+  "description": "Log every file mutation to CSV for demo prep. Records timestamp, tool, file path, action, and details for Edit, MultiEdit, Write, and Bash operations. Output: .codex/critical_log_changes.csv",
+  "compatibility": "direct",
+  "notes": [],
+  "events": [
+    "PostToolUse"
+  ],
+  "hasSupportingFiles": true
+}

@@ -1,6 +1,6 @@
 # automation/telegram-notifications
 
-Send Telegram notifications when Claude Code finishes working. Requires TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID environment variables. Get bot token from @BotFather, get chat ID by messaging the bot and visiting https://api.telegram.org/bot<TOKEN>/getUpdates
+Send Telegram notifications when Codex finishes working. Requires TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID environment variables. Get bot token from @BotFather, get chat ID by messaging the bot and visiting https://api.telegram.org/bot<TOKEN>/getUpdates
 
 Compatibility: adapted
 

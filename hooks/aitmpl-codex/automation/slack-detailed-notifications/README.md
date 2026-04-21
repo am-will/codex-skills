@@ -1,6 +1,6 @@
 # automation/slack-detailed-notifications
 
-Send detailed Slack notifications with session information when Claude Code finishes. Includes working directory, session duration, and system info. Requires SLACK_WEBHOOK_URL environment variable.
+Send detailed Slack notifications with session information when Codex finishes. Includes working directory, session duration, and system info. Requires SLACK_WEBHOOK_URL environment variable.
 
 Compatibility: direct
 

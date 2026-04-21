@@ -1,6 +1,6 @@
 # automation/slack-notifications
 
-Send Slack notifications when Claude Code finishes working. Requires SLACK_WEBHOOK_URL environment variable. Get webhook URL from Slack App settings -> Incoming Webhooks.
+Send Slack notifications when Codex finishes working. Requires SLACK_WEBHOOK_URL environment variable. Get webhook URL from Slack App settings -> Incoming Webhooks.
 
 Compatibility: adapted
 
