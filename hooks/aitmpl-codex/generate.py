@@ -245,23 +245,21 @@ def rewrite_command(command: str, rel_json: Path) -> str:
     if rel_json.as_posix() == "pre-tool/update-search-year.json":
         return ""
     command = re.sub(
-        r'"\$CLAUDE_PROJECT_DIR"/\.claude/hooks/([A-Za-z0-9._-]+(?:\.[A-Za-z0-9._-]+)?)',
+        r'"\$(?:CLAUDE|CODEX)_PROJECT_DIR"/\.(?:claude|codex)/hooks/([A-Za-z0-9._-]+(?:\.[A-Za-z0-9._-]+)?)',
         r'"./.codex/hooks/\1"',
         command,
     )
     command = re.sub(
-        r'\$CLAUDE_PROJECT_DIR/\.claude/hooks/([A-Za-z0-9._-]+(?:\.[A-Za-z0-9._-]+)?)',
+        r'\$(?:CLAUDE|CODEX)_PROJECT_DIR/\.(?:claude|codex)/hooks/([A-Za-z0-9._-]+(?:\.[A-Za-z0-9._-]+)?)',
         r'./.codex/hooks/\1',
         command,
     )
     command = re.sub(
-        r'\.claude/hooks/([A-Za-z0-9._-]+(?:\.[A-Za-z0-9._-]+)?)',
+        r'\.(?:claude|codex)/hooks/([A-Za-z0-9._-]+(?:\.[A-Za-z0-9._-]+)?)',
         r'./.codex/hooks/\1',
         command,
     )
-    command = command.replace("~/.claude/", "~/.codex/")
-    command = command.replace("~/.claude", "~/.codex")
-    return command
+    return sanitize_hook_text(command)
 
 
 def write_wrapper_script(script_path: Path, command: str, bundle_dir: Path) -> None:
@@ -340,14 +338,12 @@ def copy_supporting_files(
 
 
 def rewrite_destination(destination: str) -> str:
-    destination = destination.replace(".claude/hooks/", ".codex/hooks/")
-    destination = destination.replace(".claude/", ".codex/")
-    return destination.lstrip("/")
+    return sanitize_hook_text(destination).lstrip("/")
 
 
 def discover_helper_files(source_dir: Path, hooks: dict) -> list[Path]:
     helper_names: list[str] = []
-    pattern = re.compile(r"\.claude/hooks/([A-Za-z0-9._-]+\.(?:sh|py))")
+    pattern = re.compile(r"\.(?:claude|codex)/hooks/([A-Za-z0-9._-]+\.(?:sh|py))")
     for matcher_groups in hooks.values():
         for group in matcher_groups:
             for hook in group.get("hooks", []):
@@ -363,10 +359,7 @@ def discover_helper_files(source_dir: Path, hooks: dict) -> list[Path]:
 
 def copy_text_file(source: Path, destination: Path, executable: bool) -> None:
     destination.parent.mkdir(parents=True, exist_ok=True)
-    content = source.read_text()
-    content = content.replace(".claude/hooks/", ".codex/hooks/")
-    content = content.replace("~/.claude/", "~/.codex/")
-    content = content.replace(".claude/", ".codex/")
+    content = sanitize_hook_text(source.read_text())
     if source.name == "change-logger.py":
         content = content.replace(
             '    tool_input = data.get("tool_input", {})\n',
@@ -380,6 +373,17 @@ def copy_text_file(source: Path, destination: Path, executable: bool) -> None:
 def script_filename(rel_json: Path, source_event: str, mapped_event: str, group_index: int, hook_index: int) -> str:
     base = rel_json.with_suffix("").as_posix().replace("/", "-")
     return f"{base}-{source_event.lower()}-{mapped_event.lower()}-{group_index + 1}-{hook_index + 1}.sh"
+
+
+def sanitize_hook_text(content: str) -> str:
+    content = content.replace("Claude Code", "Codex")
+    content = content.replace("Claude CLI", "Codex CLI")
+    content = content.replace("~/.claude/", "~/.codex/")
+    content = content.replace("~/.claude", "~/.codex")
+    content = content.replace(".claude/hooks/", ".codex/hooks/")
+    content = content.replace(".claude/", ".codex/")
+    content = content.replace("CLAUDE_", "CODEX_")
+    return content
 
 
 def write_bundle_manifest(
