@@ -19,6 +19,7 @@ SHARED_WRAPPER_SRC = OUTPUT_ROOT / "_shared" / "run-with-hook-env.sh"
 
 SUPPORTED_EVENTS = (
     "PreToolUse",
+    "PermissionRequest",
     "PostToolUse",
     "SessionStart",
     "UserPromptSubmit",
@@ -37,30 +38,6 @@ PRETOOL_ADAPTATIONS = {
     "pre-tool/update-search-year.json": {
         "event": "UserPromptSubmit",
         "approximation": "Prompt-level approximation of the original search-year rewrite hook.",
-    },
-    "pre-tool/backup-before-edit.json": {
-        "event": "PostToolUse",
-        "approximation": "Best-effort backup after the edit completes; Codex cannot prehook Edit/MultiEdit.",
-    },
-    "pre-tool/console-log-cleaner.json": {
-        "event": "PostToolUse",
-        "approximation": "Warns after file edits instead of before them.",
-    },
-    "development-tools/file-backup.json": {
-        "event": "PostToolUse",
-        "approximation": "Backs up edited files after the tool finishes instead of before.",
-    },
-    "quality-gates/plan-gate.json": {
-        "event": "PostToolUse",
-        "approximation": "Plan reminder runs after file edits instead of before them.",
-    },
-    "quality-gates/tdd-gate.json": {
-        "event": "PostToolUse",
-        "approximation": "TDD reminder runs after file edits instead of before them.",
-    },
-    "security/file-protection.json": {
-        "event": "PostToolUse",
-        "approximation": "Protection warnings are emitted after the edit/write completes.",
     },
 }
 
@@ -82,6 +59,17 @@ def main() -> None:
 
     write_json(OUTPUT_ROOT / "catalog.json", {"sourceRoot": str(SOURCE_ROOT), "bundles": bundles})
     write_root_readme(bundles)
+
+
+def matcher_supports_current_codex_runtime(matcher: str | None) -> bool:
+    if matcher in (None, "", "*"):
+        return True
+    if re.fullmatch(r"[A-Za-z0-9_|]+", matcher or ""):
+        candidates = set((matcher or "").split("|"))
+        return bool(candidates & {"Bash", "apply_patch", "Edit", "Write"}) or any(
+            candidate.startswith("mcp__") for candidate in candidates
+        )
+    return False
 
 
 def generate_bundle(source_json: Path, data: dict) -> dict:
@@ -153,13 +141,13 @@ def generate_bundle(source_json: Path, data: dict) -> dict:
                 event_notes.append(f"{source_event} -> {mapped_event}: {adapt['approximation']}")
             else:
                 if any(
-                    (group.get("matcher") not in (None, "Bash", "*"))
+                    (not matcher_supports_current_codex_runtime(group.get("matcher")))
                     for group in matcher_groups
                 ):
                     direct = False
                     mapped_event = "PostToolUse"
                     event_notes.append(
-                        f"{source_event} on non-Bash matchers was remapped to PostToolUse."
+                        f"{source_event} on unsupported current-runtime matchers was remapped to PostToolUse."
                     )
         elif source_event != mapped_event:
             direct = False

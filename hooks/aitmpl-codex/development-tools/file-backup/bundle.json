@@ -1,0 +1,11 @@
+{
+  "name": "development-tools/file-backup",
+  "sourcePath": "development-tools/file-backup.json",
+  "description": "Automatically backup files before editing. Creates timestamped backups in a .backups directory when files are modified.",
+  "compatibility": "direct",
+  "notes": [],
+  "events": [
+    "PreToolUse"
+  ],
+  "hasSupportingFiles": false
+}

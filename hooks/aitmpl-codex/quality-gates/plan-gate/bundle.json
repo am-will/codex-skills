@@ -1,0 +1,11 @@
+{
+  "name": "quality-gates/plan-gate",
+  "sourcePath": "quality-gates/plan-gate.json",
+  "description": "Planning gate that warns when editing production code without an approved specification. Checks for recent .spec.md files in the project directory (last 14 days). If no spec is found, shows a warning suggesting to create one first. Non-blocking (exit 0) \u2014 acts as a reminder, not a hard gate. Supports 16 programming languages. Part of the Spec-Driven Development (SDD) methodology where every implementation should be backed by an approved specification.",
+  "compatibility": "direct",
+  "notes": [],
+  "events": [
+    "PreToolUse"
+  ],
+  "hasSupportingFiles": true
+}

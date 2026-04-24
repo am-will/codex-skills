@@ -1,0 +1,11 @@
+{
+  "name": "security/file-protection",
+  "sourcePath": "security/file-protection.json",
+  "description": "Protect critical files from accidental modification. Prevents editing of important system files, configuration files, and production code.",
+  "compatibility": "direct",
+  "notes": [],
+  "events": [
+    "PreToolUse"
+  ],
+  "hasSupportingFiles": false
+}

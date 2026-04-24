@@ -1,0 +1,33 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "./.codex/hooks/quality-gates-plan-gate-pretooluse-posttooluse-1-1.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "./.codex/hooks/quality-gates-plan-gate-pretooluse-posttooluse-2-1.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "./.codex/hooks/quality-gates-plan-gate-pretooluse-posttooluse-3-1.sh"
+          }
+        ]
+      }
+    ]
+  }
+}

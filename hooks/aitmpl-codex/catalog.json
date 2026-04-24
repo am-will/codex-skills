@@ -12,6 +12,36 @@
       "notes": []
     },
     {
+      "sourcePath": "automation/build-on-change.json",
+      "bundlePath": "automation/build-on-change",
+      "description": "Automatically trigger build processes when source files change. Detects common build tools and runs appropriate build commands.",
+      "compatibility": "direct",
+      "events": [
+        "PostToolUse"
+      ],
+      "notes": []
+    },
+    {
+      "sourcePath": "automation/change-logger.json",
+      "bundlePath": "automation/change-logger",
+      "description": "Log every file mutation to CSV for demo prep. Records timestamp, tool, file path, action, and details for Edit, MultiEdit, Write, and Bash operations. Output: .codex/critical_log_changes.csv",
+      "compatibility": "direct",
+      "events": [
+        "PostToolUse"
+      ],
+      "notes": []
+    },
+    {
+      "sourcePath": "automation/dependency-checker.json",
+      "bundlePath": "automation/dependency-checker",
+      "description": "Advanced dependency analysis and security checking. Monitors for outdated packages, security vulnerabilities, and license compatibility.",
+      "compatibility": "direct",
+      "events": [
+        "PostToolUse"
+      ],
+      "notes": []
+    },
+    {
       "sourcePath": "automation/deployment-health-monitor.json",
       "bundlePath": "automation/deployment-health-monitor",
       "description": "Monitor deployment status, error rates, and performance metrics, sending notifications for failed deployments or performance degradation. Tracks Vercel deployment health, monitors build success/failure rates, and provides alerts for deployment issues. Setup: Export 'export VERCEL_TOKEN=your_token' and 'export VERCEL_PROJECT_ID=your_project_id' (get from vercel.com/account/tokens and Vercel dashboard).",
@@ -154,6 +184,37 @@
       "notes": []
     },
     {
+      "sourcePath": "automation/vercel-auto-deploy.json",
+      "bundlePath": "automation/vercel-auto-deploy",
+      "description": "Automatically trigger Vercel deployments when code changes are committed, with environment-specific deployment strategies and rollback on failure. Setup: Export environment variables 'export VERCEL_TOKEN=your_token' and 'export VERCEL_PROJECT_ID=your_project_id' (get your token from vercel.com/account/tokens and project ID from your Vercel dashboard). Hook triggers on PostToolUse for Write, Edit, and MultiEdit operations affecting source code files.",
+      "compatibility": "direct",
+      "events": [
+        "PostToolUse"
+      ],
+      "notes": []
+    },
+    {
+      "sourcePath": "automation/vercel-environment-sync.json",
+      "bundlePath": "automation/vercel-environment-sync",
+      "description": "Synchronize environment variables between local development and Vercel deployments, ensuring consistency across all environments. Detects changes to .env files and provides options to sync with Vercel, validates environment variable format, and ensures required variables are present. Setup: Export 'export VERCEL_TOKEN=your_token' (get from vercel.com/account/tokens).",
+      "compatibility": "direct",
+      "events": [
+        "PostToolUse",
+        "SessionStart"
+      ],
+      "notes": []
+    },
+    {
+      "sourcePath": "development-tools/change-tracker.json",
+      "bundlePath": "development-tools/change-tracker",
+      "description": "Track file changes in a simple log. Records which files were modified and when for easy tracking of Codex activity.",
+      "compatibility": "direct",
+      "events": [
+        "PostToolUse"
+      ],
+      "notes": []
+    },
+    {
       "sourcePath": "development-tools/command-logger.json",
       "bundlePath": "development-tools/command-logger",
       "description": "Log all Codex commands to a file for audit and debugging purposes. Simple logging that records tool usage with timestamps.",
@@ -175,6 +236,46 @@
       "notes": [
         "SessionEnd -> Stop"
       ]
+    },
+    {
+      "sourcePath": "development-tools/file-backup.json",
+      "bundlePath": "development-tools/file-backup",
+      "description": "Automatically backup files before editing. Creates timestamped backups in a .backups directory when files are modified.",
+      "compatibility": "direct",
+      "events": [
+        "PreToolUse"
+      ],
+      "notes": []
+    },
+    {
+      "sourcePath": "development-tools/lint-on-save.json",
+      "bundlePath": "development-tools/lint-on-save",
+      "description": "Automatically run linting tools after file modifications. Supports ESLint for JavaScript/TypeScript, Pylint for Python, and RuboCop for Ruby.",
+      "compatibility": "direct",
+      "events": [
+        "PostToolUse"
+      ],
+      "notes": []
+    },
+    {
+      "sourcePath": "development-tools/nextjs-code-quality-enforcer.json",
+      "bundlePath": "development-tools/nextjs-code-quality-enforcer",
+      "description": "Enforce Next.js best practices, proper file structure, component patterns, and TypeScript usage with automated code reviews and suggestions. Validates Next.js App Router conventions, Server/Client component patterns, proper imports, and TypeScript usage. Provides real-time feedback on code quality and adherence to Next.js best practices.",
+      "compatibility": "direct",
+      "events": [
+        "PostToolUse"
+      ],
+      "notes": []
+    },
+    {
+      "sourcePath": "development-tools/smart-formatting.json",
+      "bundlePath": "development-tools/smart-formatting",
+      "description": "Smart code formatting based on file type. Automatically formats code using Prettier, Black, gofmt, rustfmt, and other language-specific formatters.",
+      "compatibility": "direct",
+      "events": [
+        "PostToolUse"
+      ],
+      "notes": []
     },
     {
       "sourcePath": "development-tools/worktree-ghostty.json",
@@ -221,9 +322,29 @@
       "notes": []
     },
     {
+      "sourcePath": "git-workflow/auto-git-add.json",
+      "bundlePath": "git-workflow/auto-git-add",
+      "description": "Automatically stage modified files with git add after editing. Helps maintain a clean git workflow by staging changes as they're made.",
+      "compatibility": "direct",
+      "events": [
+        "PostToolUse"
+      ],
+      "notes": []
+    },
+    {
+      "sourcePath": "git-workflow/smart-commit.json",
+      "bundlePath": "git-workflow/smart-commit",
+      "description": "Intelligent git commit creation with automatic message generation and validation. Creates meaningful commits based on file changes.",
+      "compatibility": "direct",
+      "events": [
+        "PostToolUse"
+      ],
+      "notes": []
+    },
+    {
       "sourcePath": "monitoring/desktop-notification-on-stop.json",
       "bundlePath": "monitoring/desktop-notification-on-stop",
-      "description": "Sends a native desktop notification when Codex finishes responding. Uses the Stop hook event so you get a single notification per response instead of one per tool call (which is very noisy with PostToolUse). Supports macOS (osascript) and Linux (notify-send). Useful when you switch to another window while Codex works — you'll get a notification when it's ready for your input.",
+      "description": "Sends a native desktop notification when Codex finishes responding. Uses the Stop hook event so you get a single notification per response instead of one per tool call (which is very noisy with PostToolUse). Supports macOS (osascript) and Linux (notify-send). Useful when you switch to another window while Codex works \u2014 you'll get a notification when it's ready for your input.",
       "compatibility": "direct",
       "events": [
         "Stop"
@@ -241,6 +362,16 @@
       "notes": []
     },
     {
+      "sourcePath": "performance/performance-budget-guard.json",
+      "bundlePath": "performance/performance-budget-guard",
+      "description": "Monitor bundle size and Core Web Vitals metrics during development, blocking deployments that exceed performance budgets with detailed reports. Automatically analyzes Next.js build output, checks bundle sizes against predefined budgets, and provides optimization recommendations. Hook triggers on PostToolUse for build-related operations and file changes that could affect performance.",
+      "compatibility": "direct",
+      "events": [
+        "PostToolUse"
+      ],
+      "notes": []
+    },
+    {
       "sourcePath": "performance/performance-monitor.json",
       "bundlePath": "performance/performance-monitor",
       "description": "Monitor system performance during Codex operations. Tracks CPU, memory usage, and execution time for performance optimization.",
@@ -252,9 +383,69 @@
       "notes": []
     },
     {
+      "sourcePath": "post-tool/format-javascript-files.json",
+      "bundlePath": "post-tool/format-javascript-files",
+      "description": "Automatically format JavaScript/TypeScript files after any Edit operation using prettier. This hook runs 'npx prettier --write' on any .js, .ts, .jsx, or .tsx file that Codex modifies, ensuring consistent code formatting. Uses npx so prettier doesn't need to be globally installed. Includes error suppression so it won't fail if prettier is not available.",
+      "compatibility": "direct",
+      "events": [
+        "PostToolUse"
+      ],
+      "notes": []
+    },
+    {
+      "sourcePath": "post-tool/format-python-files.json",
+      "bundlePath": "post-tool/format-python-files",
+      "description": "Automatically format Python files after any Edit operation using black formatter. This hook runs 'black' on any .py file that Codex modifies, ensuring consistent Python code formatting. Requires black to be installed ('pip install black'). The command includes error suppression (2>/dev/null || true) so it won't fail if black is not installed.",
+      "compatibility": "direct",
+      "events": [
+        "PostToolUse"
+      ],
+      "notes": []
+    },
+    {
+      "sourcePath": "post-tool/git-add-changes.json",
+      "bundlePath": "post-tool/git-add-changes",
+      "description": "Automatically stage changes in git after file modifications for easier commit workflow. This hook runs 'git add' on any file that Codex edits or writes, automatically staging changes for the next commit. Includes error suppression so it won't fail in non-git repositories. Helps streamline the development workflow by preparing files for commit.",
+      "compatibility": "direct",
+      "events": [
+        "PostToolUse"
+      ],
+      "notes": []
+    },
+    {
+      "sourcePath": "post-tool/run-tests-after-changes.json",
+      "bundlePath": "post-tool/run-tests-after-changes",
+      "description": "Automatically run quick tests after code modifications to ensure nothing breaks. This hook executes 'npm run test:quick' silently after any Edit operation and provides feedback on test status. Helps catch breaking changes immediately during development. Only runs if package.json exists and the test:quick script is available.",
+      "compatibility": "direct",
+      "events": [
+        "PostToolUse"
+      ],
+      "notes": []
+    },
+    {
+      "sourcePath": "pre-tool/backup-before-edit.json",
+      "bundlePath": "pre-tool/backup-before-edit",
+      "description": "Create automatic backup of files before any Edit operation for safety. This hook creates a timestamped backup copy (filename.backup.timestamp) of any existing file before Codex modifies it. Provides a safety net to recover previous versions if needed. Only backs up existing files, includes error suppression to handle edge cases gracefully.",
+      "compatibility": "direct",
+      "events": [
+        "PreToolUse"
+      ],
+      "notes": []
+    },
+    {
+      "sourcePath": "pre-tool/console-log-cleaner.json",
+      "bundlePath": "pre-tool/console-log-cleaner",
+      "description": "Warns about console.log statements when editing files on production branches (main/master). Helps prevent debug code from reaching production.",
+      "compatibility": "direct",
+      "events": [
+        "PreToolUse"
+      ],
+      "notes": []
+    },
+    {
       "sourcePath": "pre-tool/notify-before-bash.json",
       "bundlePath": "pre-tool/notify-before-bash",
-      "description": "Show notification before any Bash command execution for security awareness. This hook displays a simple echo message '🔔 About to run bash command...' before Codex executes any bash command, giving you visibility into when system commands are about to run. Useful for monitoring and auditing command execution.",
+      "description": "Show notification before any Bash command execution for security awareness. This hook displays a simple echo message '\ud83d\udd14 About to run bash command...' before Codex executes any bash command, giving you visibility into when system commands are about to run. Useful for monitoring and auditing command execution.",
       "compatibility": "direct",
       "events": [
         "PreToolUse"
@@ -274,12 +465,32 @@
       ]
     },
     {
+      "sourcePath": "quality-gates/plan-gate.json",
+      "bundlePath": "quality-gates/plan-gate",
+      "description": "Planning gate that warns when editing production code without an approved specification. Checks for recent .spec.md files in the project directory (last 14 days). If no spec is found, shows a warning suggesting to create one first. Non-blocking (exit 0) \u2014 acts as a reminder, not a hard gate. Supports 16 programming languages. Part of the Spec-Driven Development (SDD) methodology where every implementation should be backed by an approved specification.",
+      "compatibility": "direct",
+      "events": [
+        "PreToolUse"
+      ],
+      "notes": []
+    },
+    {
       "sourcePath": "quality-gates/scope-guard.json",
       "bundlePath": "quality-gates/scope-guard",
       "description": "Scope guard that detects files modified outside the declared scope of a specification. When a .spec.md file contains a 'Files to Create/Modify' section, this hook compares git-modified files against the declared list. Files outside scope trigger a warning (non-blocking). Automatically excludes test files, config files, infrastructure files, and documentation. Essential for Spec-Driven Development to prevent scope creep during implementation.",
       "compatibility": "direct",
       "events": [
         "Stop"
+      ],
+      "notes": []
+    },
+    {
+      "sourcePath": "quality-gates/tdd-gate.json",
+      "bundlePath": "quality-gates/tdd-gate",
+      "description": "Test-Driven Development enforcement hook. Blocks editing production code files (.cs, .py, .ts, .go, .rs, .rb, .php, .java, .kt, .swift, .dart) unless a corresponding test file exists. Forces the TDD workflow: write tests first, then implement. Automatically skips config files, migrations, DTOs, test files themselves, and infrastructure files. Looks for test files with common naming patterns (MyClassTest.ext, my-class.test.ext, my_class_test.ext, test_my_class.ext). Inspired by pm-workspace's Spec-Driven Development methodology.",
+      "compatibility": "direct",
+      "events": [
+        "PreToolUse"
       ],
       "notes": []
     },
@@ -294,12 +505,42 @@
       "notes": []
     },
     {
+      "sourcePath": "security/file-protection.json",
+      "bundlePath": "security/file-protection",
+      "description": "Protect critical files from accidental modification. Prevents editing of important system files, configuration files, and production code.",
+      "compatibility": "direct",
+      "events": [
+        "PreToolUse"
+      ],
+      "notes": []
+    },
+    {
       "sourcePath": "security/secret-scanner.json",
       "bundlePath": "security/secret-scanner",
       "description": "Automatically detects hardcoded secrets before git commits. Scans for API keys from 30+ providers (Anthropic: sk-ant-..., OpenAI: sk-..., AWS: AKIA..., Stripe: sk_live_..., Google: AIza..., GitHub: ghp_..., Vercel, Supabase, Hugging Face: hf_..., Replicate: r8_..., Groq: gsk_..., Databricks: dapi..., GitLab, DigitalOcean, npm, PyPI, and more), tokens, passwords, private keys, and database credentials. Blocks commits containing secrets and suggests using environment variables instead.",
       "compatibility": "direct",
       "events": [
         "PreToolUse"
+      ],
+      "notes": []
+    },
+    {
+      "sourcePath": "security/security-scanner.json",
+      "bundlePath": "security/security-scanner",
+      "description": "Scan code for security vulnerabilities and secrets after modifications. Uses multiple security tools to detect potential issues.",
+      "compatibility": "direct",
+      "events": [
+        "PostToolUse"
+      ],
+      "notes": []
+    },
+    {
+      "sourcePath": "testing/test-runner.json",
+      "bundlePath": "testing/test-runner",
+      "description": "Automatically run relevant tests after code changes. Detects test files and runs appropriate test commands based on file extensions and project structure.",
+      "compatibility": "direct",
+      "events": [
+        "PostToolUse"
       ],
       "notes": []
     }

@@ -106,20 +106,23 @@ npx skills update        # Update all installed skills
 
 ### Codex Hook Catalog
 
-The `hooks/` directory contains a catalog of **27 ready-to-install Codex hook bundles**, generated from an upstream hook template set and adapted for the current Codex event model. Bundles that still depend on unsupported `Edit|Write|MultiEdit` matcher paths were moved to `future-hook/`.
+The `hooks/` directory contains a catalog of **51 ready-to-install Codex hook bundles**, generated from an upstream hook template set and adapted for the current Codex event model. The active catalog now includes the former file-edit bundles that became viable once Codex started emitting `apply_patch` hook events with `Edit` and `Write` matcher compatibility.
 
 **Categories:**
 
 | Category | Bundles | Examples |
 |---|---|---|
-| `automation` | 13 | Slack/Discord/Telegram notifications, deployment health monitor, AGENTS loader |
-| `development-tools` | 3 | Command logger, debug window, worktree ghostty |
+| `automation` | 18 | Slack/Discord/Telegram notifications, deployment health monitor, AGENTS loader, build/dependency automation |
+| `development-tools` | 8 | Command logger, debug window, worktree ghostty, file backup, lint/format helpers |
 | `git` | 3 | Conventional commits, prevent direct push, validate branch name |
+| `git-workflow` | 2 | Auto git add, smart commit |
 | `monitoring` | 2 | Desktop notification on stop, LangSmith tracing |
-| `performance` | 1 | Performance monitor |
-| `pre-tool` | 2 | Notify before bash, update search year |
-| `quality-gates` | 1 | Scope guard |
-| `security` | 2 | Dangerous command blocker, secret scanner |
+| `performance` | 2 | Performance monitor, performance budget guard |
+| `post-tool` | 4 | Format JS/Python, git add changes, run tests after changes |
+| `pre-tool` | 4 | Notify before bash, update search year, backup before edit, console log cleaner |
+| `quality-gates` | 3 | Scope guard, plan gate, TDD gate |
+| `security` | 4 | Dangerous command blocker, secret scanner, file protection, security scanner |
+| `testing` | 1 | Test runner |
 
 **Install a bundle:**
 ```bash

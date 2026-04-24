@@ -29,10 +29,11 @@ For testing:
 Compatibility:
 - Some bundles are `direct` Codex matches.
 - Others are `adapted` where the upstream template used an event Codex does not currently expose.
+- File-edit bundles that match `Edit` and `Write` are now active because Codex emits `apply_patch` hooks with matcher compatibility for those names.
 - Network/service hooks like Slack, Discord, Telegram, Vercel, and LangSmith are skipped by the harness and may need manual credentials.
 
 Archived bundles:
-- Hook bundles that still depend on unsupported `Edit|Write|MultiEdit` matcher paths now live under `../future-hook/aitmpl-codex/`.
+- `../future-hook/` is now a reserve archive for bundles that still require runtime behavior the live Codex hook payloads do not expose cleanly.
 
 ## Create Custom Hooks
 
