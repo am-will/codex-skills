@@ -1,0 +1,4 @@
+interface:
+  display_name: "Img to Frontend"
+  short_description: "Turn selected images into coded pages."
+  default_prompt: "Use imagegen to create four distinct website design images first, stop for my selection, then write a detailed build prompt for the selected image and implement it with screenshot-based iteration until the real frontend closely matches the reference."
