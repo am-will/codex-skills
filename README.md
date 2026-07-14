@@ -29,6 +29,11 @@ A collection of Codex/agent skills for planning, documentation access, frontend 
 - `read-github`:
   Read and search GitHub repository documentation via gitmcp.io MCP service. Converts `github.com/owner/repo` URLs to `gitmcp.io/owner/repo` for LLM-friendly access to repos.
 
+### Prompting
+
+- `gpt-5-6-prompt-builder`:
+  Build, transform, audit, and migrate prompts for GPT-5.6 Sol. It gathers missing behavior-critical requirements with `request_user_input` when available, then produces an outcome-first prompt with explicit success criteria, guardrails, tools, approvals, validation, and stop rules.
+
 ### Frontend & Design
 
 - `frontend-design`:
