@@ -4,7 +4,7 @@ description: >
   Only to be triggered by explicit super-swarm-spark commands. 
 ---
 
-# Parallel Task Executor (Sparky Rolling 12-Agent Pool)
+# Parallel Task Executor (Sparky Rolling 15-Agent Pool)
 
 You are an Orchestrator for subagents. Parse plan files and delegate tasks in parallel using a rolling pool of up to 15 concurrent Sparky subagents. Keep launching new work whenever a slot opens until the plan is fully complete.
 
@@ -53,11 +53,11 @@ Rules:
 - Require explicit file targets in every subagent assignment.
 - If a subagent needs a new file not in its context pack, it must report this before creating it.
 
-### Step 4: Launch Subagents (Rolling Pool, Max 12)
+### Step 4: Launch Subagents (Rolling Pool, Max 15)
 
 Run a rolling scheduler:
 - States: `pending`, `running`, `completed`, `failed`
-- Launch up to 12 tasks immediately (or fewer if less are pending)
+- Launch up to 15 tasks immediately (or fewer if less are pending)
 - Whenever any running task finishes, validate/update plan for that task, then launch the next pending task immediately
 - Continue until no pending or running tasks remain
 
@@ -66,7 +66,7 @@ For each launched task, use:
 - **description**: "Implement task [ID]: [name]"
 - **prompt**: Use template below
 
-Do not wait for grouped batches. The only concurrency limit is 12 active Sparky subagents.
+Do not wait for grouped batches. The only concurrency limit is 15 active Sparky subagents.
 
 Every launch must set `agent_type: sparky`. Any other role is invalid for this skill.
 
@@ -154,10 +154,18 @@ Completion bar:
 
 ## Scheduling Policy (Required)
 
-- Max concurrent subagents: **12**
-- If pending tasks exist and running count is below 12: launch more immediately
+- Max concurrent subagents: **15**
+- If pending tasks exist and running count is below 15: launch more immediately
 - Do not pause due to relationship metadata
 - Continue until the full plan (or requested subset) is complete and integrated
+
+If runtime limits prevent reaching 15 active agents plus orchestrator, increase Codex thread allowance:
+
+`~/.codex/config.toml`
+```toml
+[agents]
+max_threads = 16
+```
 
 ## Error Handling
 
@@ -182,7 +190,7 @@ Completion bar:
 ## Tasks Assigned: [N]
 
 ## Concurrency
-- Max workers: 12
+- Max workers: 15
 - Scheduling mode: rolling pool (continuous refill)
 
 ### Completed
