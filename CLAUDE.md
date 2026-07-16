@@ -26,23 +26,32 @@ skill-name/
 
 ### Skill Types in this Repo
 
-1. **Agent orchestration skills** (`codex-subagent`, `llm-council`, `planner`, `parallel-task`)
-   - Spawn and coordinate multiple AI agents
-   - Handle complex multi-step workflows
-   - Manage parallel task execution
+1. **Planning skills** (`planner`, `plan-harder`, `swarm-planner`, `llm-council`)
+   - Produce implementation plans before coding
+   - Define phased execution and task-level validation
+   - For `swarm-planner`, enforce explicit `depends_on` dependency maps
 
-2. **Documentation access skills** (`context7`, `openai-docs-skill`, `read-github`)
-   - Fetch up-to-date library docs
+2. **Execution skills** (`parallel-task`, `parallel-task-spark`, `super-swarm-spark`)
+   - Execute plan files with subagents
+   - `parallel-task` and `parallel-task-spark` are dependency-aware (unblocked wave execution)
+   - `super-swarm-spark` is a rolling-pool high-throughput executor that intentionally ignores dependency maps and expects orchestrator-side conflict resolution
+
+3. **Documentation access skills** (`context7`, `openai-docs-skill`, `read-github`, `markdown-url`)
+   - Fetch up-to-date docs and repo references
    - Query documentation via APIs or MCP servers
-   - Convert URLs to LLM-friendly formats
+   - Convert URLs into LLM-friendly formats
 
-3. **Domain expertise skills** (`frontend-design`, `frontend-responsive-ui`, `vercel-react-best-practices`)
+4. **Domain expertise skills** (`frontend-design`, `frontend-responsive-ui`, `vercel-react-best-practices`)
    - Provide specialized patterns and best practices
    - Imported from authoritative sources (Anthropic, Vercel)
 
-4. **Tool integration skills** (`agent-browser`, `gemini-computer-use`)
+5. **Tool integration skills** (`agent-browser`, `gemini-computer-use`)
    - Browser automation and computer control
    - Integrate external tools into agent workflows
+
+6. **Workflow utility skills** (`role-creator`, `tdd-test-writer`)
+   - Manage Codex role configuration
+   - Support test-first implementation workflows
 
 ## Working with Skills
 
@@ -95,13 +104,23 @@ cp -r ./skills/<skill-name> ~/.claude/skills/
 
 ## Key Patterns
 
-### Agent Orchestration Pattern
+### Planning/Execution Patterns
 
-Skills like `codex-subagent`, `llm-council`, `planner`, and `parallel-task` follow this pattern:
-- Intake/clarification phase (ask questions to build context)
-- Prompt generation (create detailed prompts for subagents)
-- Parallel execution (launch multiple agents via background shells)
-- Collection/synthesis (gather results, merge, validate)
+- **Planning-first pattern** (`planner`, `plan-harder`, `swarm-planner`, `llm-council`)
+  - Intake/clarification
+  - Research and dependency modeling
+  - Plan generation and review
+  - No implementation at this stage
+
+- **Dependency-aware execution pattern** (`parallel-task`, `parallel-task-spark`)
+  - Parse task graph (`depends_on`)
+  - Launch only unblocked tasks in parallel waves
+  - Validate each wave, update plan state, repeat
+
+- **Rolling-pool execution pattern** (`super-swarm-spark`)
+  - Keep worker pool saturated for throughput
+  - Relationship metadata is awareness-only (not a launch blocker)
+  - Orchestrator resolves dependency/integration conflicts at the tail end
 
 **Important for llm-council**: Do NOT yield/finish the response until the full 30-minute timer completes and `final-plan.md` is saved. The session must stay open to prevent premature termination.
 

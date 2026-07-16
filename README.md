@@ -7,16 +7,25 @@ A collection of Codex/agent skills for planning, documentation access, frontend 
 
 ## Available skills
 
-### Agent Orchestration
+### Planning
 
 - `planner`:
-  Create comprehensive, phased implementation plans with sprints and atomic tasks. Use for planning implementations, breaking down features, or creating structured roadmaps.
+  Create comprehensive phased plans with sprints, atomic tasks, and validation.
 - `plan-harder`:
-  Enhanced planning variant for more detailed analysis and task breakdown.
-- `parallel-task`:
-  Execute plan files by launching multiple parallel subagents to complete tasks simultaneously. Requires an existing plan file from `planner`.
+  A deeper planning variant for larger or ambiguous implementation scopes.
+- `swarm-planner`:
+  Explicit dependency-aware planner optimized for multi-agent execution. Requires `depends_on` task wiring.
 - `llm-council`:
-  Multi-agent orchestration system for planning complex tasks. Spawns multiple AI planners (Claude, Codex, Gemini) to generate independent plans, then uses a judge agent to synthesize the best approach. Includes a real-time web UI for monitoring progress and refining plans interactively.
+  Multi-agent planning council (multiple planners + judge) that synthesizes one final plan.
+
+### Execution
+
+- `parallel-task`:
+  Dependency-aware executor that runs unblocked tasks in waves based on `depends_on`.
+- `parallel-task-spark`:
+  Same dependency-aware wave execution model as `parallel-task`, but forces Sparky-role workers.
+- `super-swarm-spark`:
+  High-throughput rolling-pool Sparky executor focused on continuous parallel dispatch. Intentionally ignores dependency maps; dependency-conflict resolution is delegated to the orchestrator.
 
 ### Documentation Access
 
@@ -54,10 +63,29 @@ A collection of Codex/agent skills for planning, documentation access, frontend 
 
 ### Browser Automation
 
-- `gemini-computer-use`:
-  Gemini 2.5 Computer Use browser-control agent skill (Playwright + safety confirmation loop).
 - `agent-browser`:
   Fast Rust-based headless browser automation CLI from Vercel Labs with snapshot/act pattern for AI agents.
+- `gemini-computer-use`:
+  Gemini 2.5 Computer Use browser-control agent skill (Playwright + safety confirmation loop).
+
+### Workflow Utilities
+
+- `role-creator`:
+  Create and install custom Codex roles in `~/.codex/config.toml`.
+- `tdd-test-writer`:
+  Generate test-first implementation workflows and TDD-oriented task prompts.
+
+## Planner/Executor Compatibility
+
+| Skill | Type | Dependency behavior | Best use |
+|------|------|------|------|
+| `swarm-planner` | Planner | Strict explicit `depends_on` graph | Build DAG-ready plans for swarm execution |
+| `planner` | Planner | Dependency guidance (less strict format) | General phased implementation planning |
+| `plan-harder` | Planner | Dependency guidance (deeper decomposition) | Complex planning with tighter task granularity |
+| `llm-council` | Planner orchestrator | Planner-level only, no code execution | Multi-model plan synthesis and adjudication |
+| `parallel-task` | Executor | Dependency-aware wave execution | Safe/default executor for dependency graphs |
+| `parallel-task-spark` | Executor | Dependency-aware wave execution | Same as above, pinned to Sparky workers |
+| `super-swarm-spark` | Executor | Intentionally dependency-agnostic; relationships are awareness-only | Max throughput execution; dependency conflict resolution is handled by the orchestrator |
 
 ## Installation
 
