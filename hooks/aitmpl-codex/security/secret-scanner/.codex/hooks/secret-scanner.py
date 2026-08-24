@@ -66,8 +66,9 @@ SECRET_PATTERNS = [
     # Azure Keys
     (r'(?i)azure[_\-\s]*(?:key|secret|token)[\'"\s]*[=:][\'"\s]*[A-Za-z0-9+/=]{32,}', 'Azure Key', 'high'),
 
-    # Cloudflare API Tokens
-    (r'(?:cf|cloudflare)[_\-]?[A-Za-z0-9_\-]{37,}', 'Cloudflare API Token', 'medium'),
+    # Cloudflare API Tokens. Require an assignment-shaped variable name so
+    # integrity hashes that happen to begin with "cf" are not treated as keys.
+    (r'(?i)(?:cf|cloudflare)[_\-\s]*(?:api[_\-\s]*)?token[\'"\s]*[=:]\s*(?:[\'"][A-Za-z0-9_\-]{20,}[\'"]|[A-Za-z0-9_\-]{20,})', 'Cloudflare API Token', 'medium'),
 
     # DigitalOcean Tokens
     (r'dop_v1_[0-9a-f]{64}', 'DigitalOcean Personal Access Token', 'high'),
@@ -100,7 +101,7 @@ SECRET_PATTERNS = [
 
     # Private Keys
     (r'-----BEGIN (RSA |DSA |EC )?PRIVATE KEY-----', 'Private Key', 'critical'),
-    (r'-----BEGIN OPENSSH PRIVATE KEY-----', 'OpenSSH Private Key', 'critical'),
+    (r'-----BEGIN OPENSSH ' r'PRIVATE KEY-----', 'OpenSSH Private Key', 'critical'),
 
     # Database Connection Strings
     (r'(?i)(mysql|postgresql|postgres|mongodb)://[^\s\'"\)]+:[^\s\'"\)]+@', 'Database Connection String', 'high'),
@@ -127,8 +128,10 @@ SECRET_PATTERNS = [
     # Mailgun API Keys
     (r'key-[0-9a-zA-Z]{32}', 'Mailgun API Key', 'medium'),
 
-    # Heroku API Keys
-    (r'[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}', 'Potential API Key (UUID format)', 'low'),
+    # UUID-shaped credentials. UUIDs are routinely non-secret resource IDs, so
+    # require a credential-bearing assignment context instead of matching every
+    # UUID in documentation, inventories, and provider receipts.
+    (r'(?i)(?:api[_\-\s]*key|secret[_\-\s]*key|access[_\-\s]*token|client[_\-\s]*secret|password|credential)[\'"\s]*[=:][\'"\s]*[\'"]?[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}[\'"]?', 'Potential UUID Credential', 'medium'),
 ]
 
 # Files to exclude from scanning
@@ -137,6 +140,7 @@ EXCLUDED_FILES = [
     '.env.sample',
     '.env.template',
     'package-lock.json',
+    'deno.lock',
     'yarn.lock',
     'poetry.lock',
     'Pipfile.lock',
@@ -187,16 +191,13 @@ def should_skip_file(file_path):
 
 def get_staged_files():
     """Get list of staged files"""
-    try:
-        result = subprocess.run(
-            ['git', 'diff', '--cached', '--name-only', '--diff-filter=ACM'],
-            capture_output=True,
-            text=True,
-            check=True
-        )
-        return [f.strip() for f in result.stdout.split('\n') if f.strip()]
-    except subprocess.CalledProcessError:
-        return []
+    result = subprocess.run(
+        ['git', 'diff', '--cached', '--name-only', '--diff-filter=ACM'],
+        capture_output=True,
+        text=True,
+        check=True
+    )
+    return [f.strip() for f in result.stdout.split('\n') if f.strip()]
 
 def scan_file(file_path):
     """Scan a single file for secrets"""
@@ -292,8 +293,42 @@ def print_findings(findings):
     print('     • Disable hook temporarily: remove from .codex/hooks.json', file=sys.stderr)
     print('', file=sys.stderr)
 
+def enter_triggering_repository(input_data):
+    """Enter the Git root supplied by the hook payload, failing safely."""
+    if not isinstance(input_data, dict):
+        return False
+
+    cwd = input_data.get('cwd') or os.environ.get('CODEX_CWD') or os.environ.get('CODEX_PROJECT_DIR')
+    if not isinstance(cwd, str) or not cwd.strip():
+        return False
+
+    candidate = os.path.abspath(os.path.expanduser(cwd))
+    if not os.path.isdir(candidate):
+        return False
+
+    try:
+        result = subprocess.run(
+            ['git', '-C', candidate, 'rev-parse', '--show-toplevel'],
+            capture_output=True,
+            text=True,
+            check=True
+        )
+    except (OSError, subprocess.CalledProcessError):
+        return False
+
+    repository_root = result.stdout.strip()
+    if not repository_root or not os.path.isdir(repository_root):
+        return False
+
+    try:
+        os.chdir(repository_root)
+    except OSError:
+        return False
+    return True
+
+
 def main():
-    # Read hook input from stdin (Claude Code passes JSON via stdin)
+    # Read hook input from stdin (Codex passes JSON via stdin)
     try:
         input_data = json.load(sys.stdin)
     except (json.JSONDecodeError, ValueError):
@@ -306,8 +341,19 @@ def main():
     if not re.search(r'git\s+commit', command):
         sys.exit(0)
 
-    # Get staged files
-    staged_files = get_staged_files()
+    # A secret scanner must never silently inspect the installed bundle or an
+    # unrelated directory when repository context is missing or invalid.
+    if not enter_triggering_repository(input_data):
+        print('SECRET SCANNER: Could not resolve the triggering Git repository; commit blocked.', file=sys.stderr)
+        sys.exit(2)
+
+    # Get staged files. Git inspection failures are blocking because treating
+    # them as an empty staged set would bypass the scanner.
+    try:
+        staged_files = get_staged_files()
+    except (OSError, subprocess.CalledProcessError):
+        print('SECRET SCANNER: Could not inspect staged files; commit blocked.', file=sys.stderr)
+        sys.exit(2)
 
     # PreToolUse runs before the command, so files may not be staged yet.
     # Handle two cases:
