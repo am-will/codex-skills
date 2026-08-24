@@ -376,60 +376,143 @@ def sanitize_hook_text(content: str) -> str:
     return content
 
 
-def adapt_secret_scanner(content: str) -> str:
-    replacements = (
-        (
-            "Cloudflare token pattern",
-            r"""    # Cloudflare API Tokens
+SECRET_SCANNER_REPLACEMENTS = (
+    (
+        "Cloudflare token pattern",
+        r"""    # Cloudflare API Tokens
     (r'(?:cf|cloudflare)[_\-]?[A-Za-z0-9_\-]{37,}', 'Cloudflare API Token', 'medium'),
 """,
-            r"""    # Cloudflare API Tokens. Require an assignment-shaped variable name so
+        r"""    # Cloudflare API Tokens. Require an assignment-shaped variable name so
     # integrity hashes that happen to begin with "cf" are not treated as keys.
-    (r'(?i)(?:cf|cloudflare)[_\-\s]*(?:api[_\-\s]*)?token[\'"\s]*[=:][\'"\s]*[\'"][A-Za-z0-9_\-]{20,}[\'"]', 'Cloudflare API Token', 'medium'),
+    (r'(?i)(?:cf|cloudflare)[_\-\s]*(?:api[_\-\s]*)?token[\'"\s]*[=:]\s*(?:[\'"][A-Za-z0-9_\-]{20,}[\'"]|[A-Za-z0-9_\-]{20,})', 'Cloudflare API Token', 'medium'),
 """,
-        ),
-        (
-            "UUID credential pattern",
-            r"""    # Heroku API Keys
+    ),
+    (
+        "UUID credential pattern",
+        r"""    # Heroku API Keys
     (r'[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}', 'Potential API Key (UUID format)', 'low'),
 """,
-            r"""    # UUID-shaped credentials. UUIDs are routinely non-secret resource IDs, so
+        r"""    # UUID-shaped credentials. UUIDs are routinely non-secret resource IDs, so
     # require a credential-bearing assignment context instead of matching every
     # UUID in documentation, inventories, and provider receipts.
     (r'(?i)(?:api[_\-\s]*key|secret[_\-\s]*key|access[_\-\s]*token|client[_\-\s]*secret|password|credential)[\'"\s]*[=:][\'"\s]*[\'"]?[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}[\'"]?', 'Potential UUID Credential', 'medium'),
 """,
-        ),
-        (
-            "OpenSSH private-key pattern source",
-            "    (r'-----BEGIN OPENSSH "
-            + "PRIVATE KEY-----', 'OpenSSH Private Key', 'critical'),\n",
-            "    (r'-----BEGIN OPENSSH ' r'PRIVATE KEY-----', 'OpenSSH Private Key', 'critical'),\n",
-        ),
-        (
-            "Deno lockfile exclusion",
-            "    'package-lock.json',\n    'yarn.lock',\n",
-            "    'package-lock.json',\n    'deno.lock',\n    'yarn.lock',\n",
-        ),
-        (
-            "repository working directory",
-            """        sys.exit(0)
-
-    # Only act on git commit commands
+    ),
+    (
+        "OpenSSH private-key pattern source",
+        "    (r'-----BEGIN OPENSSH "
+        + "PRIVATE KEY-----', 'OpenSSH Private Key', 'critical'),\n",
+        "    (r'-----BEGIN OPENSSH ' r'PRIVATE KEY-----', 'OpenSSH Private Key', 'critical'),\n",
+    ),
+    (
+        "Deno lockfile exclusion",
+        "    'package-lock.json',\n    'yarn.lock',\n",
+        "    'package-lock.json',\n    'deno.lock',\n    'yarn.lock',\n",
+    ),
+    (
+        "staged-file discovery failure handling",
+        """def get_staged_files():
+    \"\"\"Get list of staged files\"\"\"
+    try:
+        result = subprocess.run(
+            ['git', 'diff', '--cached', '--name-only', '--diff-filter=ACM'],
+            capture_output=True,
+            text=True,
+            check=True
+        )
+        return [f.strip() for f in result.stdout.split('\\n') if f.strip()]
+    except subprocess.CalledProcessError:
+        return []
 """,
-            """        sys.exit(0)
-
-    # Run git checks against the repository that triggered the hook, not the
-    # installed hook bundle directory.
-    cwd = input_data.get('cwd') or os.environ.get('CODEX_CWD') or os.environ.get('CODEX_PROJECT_DIR')
-    if cwd and os.path.isdir(cwd):
-        os.chdir(cwd)
-
-    # Only act on git commit commands
-""",
-        ),
+        """def get_staged_files():
+    \"\"\"Get list of staged files\"\"\"
+    result = subprocess.run(
+        ['git', 'diff', '--cached', '--name-only', '--diff-filter=ACM'],
+        capture_output=True,
+        text=True,
+        check=True
     )
+    return [f.strip() for f in result.stdout.split('\\n') if f.strip()]
+""",
+    ),
+    (
+        "repository context helper",
+        "\ndef main():\n",
+        """
+def enter_triggering_repository(input_data):
+    \"\"\"Enter the Git root supplied by the hook payload, failing safely.\"\"\"
+    if not isinstance(input_data, dict):
+        return False
 
-    for label, original, replacement in replacements:
+    cwd = input_data.get('cwd') or os.environ.get('CODEX_CWD') or os.environ.get('CODEX_PROJECT_DIR')
+    if not isinstance(cwd, str) or not cwd.strip():
+        return False
+
+    candidate = os.path.abspath(os.path.expanduser(cwd))
+    if not os.path.isdir(candidate):
+        return False
+
+    try:
+        result = subprocess.run(
+            ['git', '-C', candidate, 'rev-parse', '--show-toplevel'],
+            capture_output=True,
+            text=True,
+            check=True
+        )
+    except (OSError, subprocess.CalledProcessError):
+        return False
+
+    repository_root = result.stdout.strip()
+    if not repository_root or not os.path.isdir(repository_root):
+        return False
+
+    try:
+        os.chdir(repository_root)
+    except OSError:
+        return False
+    return True
+
+
+def main():
+""",
+    ),
+    (
+        "repository context enforcement",
+        """    # Only act on git commit commands
+    tool_input = input_data.get('tool_input', {})
+    command = tool_input.get('command', '')
+    if not re.search(r'git\\s+commit', command):
+        sys.exit(0)
+
+    # Get staged files
+    staged_files = get_staged_files()
+""",
+        """    # Only act on git commit commands
+    tool_input = input_data.get('tool_input', {})
+    command = tool_input.get('command', '')
+    if not re.search(r'git\\s+commit', command):
+        sys.exit(0)
+
+    # A secret scanner must never silently inspect the installed bundle or an
+    # unrelated directory when repository context is missing or invalid.
+    if not enter_triggering_repository(input_data):
+        print('SECRET SCANNER: Could not resolve the triggering Git repository; commit blocked.', file=sys.stderr)
+        sys.exit(2)
+
+    # Get staged files. Git inspection failures are blocking because treating
+    # them as an empty staged set would bypass the scanner.
+    try:
+        staged_files = get_staged_files()
+    except (OSError, subprocess.CalledProcessError):
+        print('SECRET SCANNER: Could not inspect staged files; commit blocked.', file=sys.stderr)
+        sys.exit(2)
+""",
+    ),
+)
+
+
+def adapt_secret_scanner(content: str) -> str:
+    for label, original, replacement in SECRET_SCANNER_REPLACEMENTS:
         occurrences = content.count(original)
         if occurrences != 1:
             raise SystemExit(
