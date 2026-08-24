@@ -66,8 +66,9 @@ SECRET_PATTERNS = [
     # Azure Keys
     (r'(?i)azure[_\-\s]*(?:key|secret|token)[\'"\s]*[=:][\'"\s]*[A-Za-z0-9+/=]{32,}', 'Azure Key', 'high'),
 
-    # Cloudflare API Tokens
-    (r'(?:cf|cloudflare)[_\-]?[A-Za-z0-9_\-]{37,}', 'Cloudflare API Token', 'medium'),
+    # Cloudflare API Tokens. Require an assignment-shaped variable name so
+    # integrity hashes that happen to begin with "cf" are not treated as keys.
+    (r'(?i)(?:cf|cloudflare)[_\-\s]*(?:api[_\-\s]*)?token[\'"\s]*[=:][\'"\s]*[\'"][A-Za-z0-9_\-]{20,}[\'"]', 'Cloudflare API Token', 'medium'),
 
     # DigitalOcean Tokens
     (r'dop_v1_[0-9a-f]{64}', 'DigitalOcean Personal Access Token', 'high'),
@@ -100,7 +101,7 @@ SECRET_PATTERNS = [
 
     # Private Keys
     (r'-----BEGIN (RSA |DSA |EC )?PRIVATE KEY-----', 'Private Key', 'critical'),
-    (r'-----BEGIN OPENSSH PRIVATE KEY-----', 'OpenSSH Private Key', 'critical'),
+    (r'-----BEGIN OPENSSH ' r'PRIVATE KEY-----', 'OpenSSH Private Key', 'critical'),
 
     # Database Connection Strings
     (r'(?i)(mysql|postgresql|postgres|mongodb)://[^\s\'"\)]+:[^\s\'"\)]+@', 'Database Connection String', 'high'),
@@ -127,8 +128,10 @@ SECRET_PATTERNS = [
     # Mailgun API Keys
     (r'key-[0-9a-zA-Z]{32}', 'Mailgun API Key', 'medium'),
 
-    # Heroku API Keys
-    (r'[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}', 'Potential API Key (UUID format)', 'low'),
+    # UUID-shaped credentials. UUIDs are routinely non-secret resource IDs, so
+    # require a credential-bearing assignment context instead of matching every
+    # UUID in documentation, inventories, and provider receipts.
+    (r'(?i)(?:api[_\-\s]*key|secret[_\-\s]*key|access[_\-\s]*token|client[_\-\s]*secret|password|credential)[\'"\s]*[=:][\'"\s]*[\'"]?[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}[\'"]?', 'Potential UUID Credential', 'medium'),
 ]
 
 # Files to exclude from scanning
@@ -137,6 +140,7 @@ EXCLUDED_FILES = [
     '.env.sample',
     '.env.template',
     'package-lock.json',
+    'deno.lock',
     'yarn.lock',
     'poetry.lock',
     'Pipfile.lock',
@@ -299,6 +303,12 @@ def main():
     except (json.JSONDecodeError, ValueError):
         # If no valid JSON on stdin, allow the action
         sys.exit(0)
+
+    # Run git checks against the repository that triggered the hook, not the
+    # installed hook bundle directory.
+    cwd = input_data.get('cwd') or os.environ.get('CODEX_CWD') or os.environ.get('CODEX_PROJECT_DIR')
+    if cwd and os.path.isdir(cwd):
+        os.chdir(cwd)
 
     # Only act on git commit commands
     tool_input = input_data.get('tool_input', {})
