@@ -1,6 +1,6 @@
 # development-tools/command-logger
 
-Log all Codex commands to a file for audit and debugging purposes. Simple logging that records tool usage with timestamps.
+Logs each matching `PreToolUse` event's timestamp, tool name, and file path (when provided) to `~/.codex/command-log.txt`. The log appends indefinitely without rotation or redaction; file paths may reveal sensitive project information, so protect the log appropriately.
 
 Compatibility: direct
 
