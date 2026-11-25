@@ -4,7 +4,7 @@ const fs = require('fs');
 const fsp = fs.promises;
 const path = require('path');
 const os = require('os');
-const { execSync } = require('child_process');
+const { execSync, execFileSync } = require('child_process');
 
 function usage(exitCode = 1) {
   console.log(`codexskills - install Codex skills into user or project scope
@@ -97,7 +97,10 @@ function splitRepoSpec(spec) {
 
 function ensureCmd(cmd) {
   try {
-    execSync(`command -v ${cmd}`, { stdio: 'ignore' });
+    // Resolve the executable without a shell. Node defaults to cmd.exe on
+    // Windows, where POSIX `command -v` is unavailable and incorrectly reports
+    // PATH tools as missing (am-will/codex-skills#4).
+    execFileSync(cmd, ['--version'], { stdio: 'ignore', windowsHide: true });
   } catch {
     throw new Error(`Missing required command: ${cmd}`);
   }
