@@ -247,7 +247,19 @@ def rewrite_command(command: str, rel_json: Path) -> str:
         r'./.codex/hooks/\1',
         command,
     )
-    return sanitize_hook_text(command)
+    command = sanitize_hook_text(command)
+    if rel_json.as_posix() == "development-tools/command-logger.json":
+        command = command.replace("$CODEX_TOOL_NAME", "${logger_tool_name}")
+        command = command.replace("$CODEX_TOOL_FILE_PATH", "${logger_tool_file}")
+        command = """if [[ "${CODEX_HOOK_EVENT_NAME:-}" == PreToolUse || -n "${CODEX_TOOL_NAME:-}${CODEX_TOOL_FILE_PATH:-}" ]]; then
+  logger_tool_name="${CODEX_TOOL_NAME:-}"
+  logger_tool_file="${CODEX_TOOL_FILE_PATH:-}"
+else
+  logger_tool_name="${CLAUDE_TOOL_NAME:-}"
+  logger_tool_file="${CLAUDE_TOOL_FILE_PATH:-}"
+fi
+""" + command
+    return command
 
 
 def write_wrapper_script(script_path: Path, command: str, bundle_dir: Path) -> None:
